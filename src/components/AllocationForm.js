@@ -5,11 +5,28 @@ const AllocationForm = (props) => {
     const { dispatch,remaining  } = useContext(AppContext);
 
     const [name, setName] = useState('');
-    const [cost, setCost] = useState('');
+    const [cost, setCost] = useState('0');
     const [action, setAction] = useState('');
-
+    const validateCost = (e) => {
+        e.preventDefault();
+        let cost = document.getElementById('cost').value;
+        var numbersOnly = /^[0-9]+$/;
+        if(cost.match(numbersOnly))
+        {
+            if(parseInt(cost) > parseInt(remaining)) {
+                document.getElementById('errMsg').innerHTML = "The value cannot exceed remaining budget: "+remaining;
+                setCost(remaining);
+                return;
+            }
+            setCost(cost);
+            document.getElementById('errMsg').innerHTML = "";
+        }
+        else
+        {
+            document.getElementById('errMsg').innerHTML = "Only numbers are allowed";
+        }
+    }
     const submitEvent = () => {
-
             if(cost > remaining) {
                 alert("The value cannot exceed remaining funds  £"+remaining);
                 setCost("");
@@ -65,12 +82,14 @@ const AllocationForm = (props) => {
                         id='cost'
                         value={cost}
                         style={{ marginLeft: '2rem' , size: 10}}
-                        onChange={(event) => setCost(event.target.value)}>
+                        onChange={validateCost}>
+                        {/* onChange={(event) => setCost(event.target.value)} */}
                         </input>
 
                     <button className="btn btn-primary" onClick={submitEvent} style={{ marginLeft: '2rem' }}>
                         Save
                     </button>
+                    <div id="errMsg" style={{color:'red',paddingTop:'10px',fontWeight:'bold',display:'block',width:'100%',textAlign:'center'}}></div>
                 </div>
                 </div>
 
